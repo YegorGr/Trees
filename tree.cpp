@@ -1,5 +1,14 @@
 #include "tree.h"
 
+#define GENERATE_STRING(name) #name,
+
+const char* ErrString [] = 
+{
+    ERR_NODE_LIST(GENERATE_STRING)
+};
+
+#undef GENERATE_STRING
+
 ErrNode CreateNode (node_t** new_node, elem_t data)
 {
     assert(new_node);
@@ -170,8 +179,11 @@ void DumpNode (node_t* node, FILE* dot)
 {
     if (node == nullptr || dot == nullptr) return;
 
-    fprintf(dot, "    node%p [shape=Mrecord, label=\"{ %.2lf | 0x%p | { <left> 0x%p | <right> 0x%p } }\"];\n", 
-            node, node->data, node, node->left, node->right);
+    ErrNode err = NodeVerify(node);
+
+    fprintf(dot, "    node%p [shape=Mrecord, "
+                 "label=\"{ { Err: %s | Data: %.2lf } | Ptr: 0x%p | { <left> Ptr(L): 0x%p | <right> Ptr(R): 0x%p } }\"];\n", 
+            node, ErrString[err], node->data, node, node->left, node->right);
 
     if (node->left != nullptr)
     {
@@ -187,4 +199,4 @@ void DumpNode (node_t* node, FILE* dot)
 
     if (node->left != nullptr && node->right != nullptr)
          fprintf(dot, "    { rank=same; node%p; node%p; }\n", node->left, node->right);
- }
+}

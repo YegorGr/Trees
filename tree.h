@@ -5,20 +5,9 @@
 #include <assert.h>
 #include <math.h>
 
-typedef double elem_t;
+#include "errors.h"
 
-enum ErrNode 
-{
-    IS_OK,
-    NO_MEMORY,
-    INCORRECT_PARENT,
-    ERR_LEFT_CONNECTION,
-    ERR_RIGHT_CONNECTION,
-    RIGHT_SELF_DESTRUCTION,
-    LEFT_SELF_DESTRUCTION,
-    THE_SAME_LEFT_RIGHT,
-    NULL_PTR,
-};
+typedef double elem_t;
 
 struct tree_t;
 

@@ -3,6 +3,8 @@
 int main ()
 {
     node_t* node1 = nullptr;
+    tree_t* tree1 = nullptr;
+    node1->tree = tree1;
     CreateNode(&node1, 0, 8.0);
 }
 
@@ -63,6 +65,9 @@ ErrNode NodeVerify (node_t* node)
 
 ErrNode DeleteNode (node_t* node)
 {
+    if (node == nullptr)
+        return NULL_PTR;
+    
     ErrNode err = IS_OK;
     if ((err = NodeVerify(node)) != IS_OK)
         return err;
@@ -81,12 +86,20 @@ ErrNode DeleteNode (node_t* node)
         if (node->parent->right == node)
             node->parent->right = nullptr;
     }
+    else 
+    {
+        if (node->tree != nullptr && node->tree->root == node)
+            node->tree->root = nullptr;
+    }
 
     node->data   = NAN; 
     node->left   = nullptr;
     node->right  = nullptr;
     node->parent = nullptr;
 
+    if (node->tree != nullptr) 
+        node->tree->size--;
+    
     free(node);
 
     return IS_OK;
@@ -115,4 +128,24 @@ ErrNode LinkLeft (node_t* node_p, node_t* node_c)
 
     return IS_OK;
 }
+
+ErrNode CreateTree (tree_t* tree, node_t** new_node, elem_t first_elem)
+{
+    if (tree == nullptr || new_node == nullptr)
+        return NULL_PTR;
+
+    tree->size = 0;
+    tree->root = nullptr;
+
+    ErrNode err = IS_OK;
+    if ((err = CreateNode(new_node, nullptr, first_elem)) != IS_OK)
+        return err;
+    
+    tree->root = *new_node;
+    tree->size = 1;
+
+    return IS_OK;
+}
+
+
 

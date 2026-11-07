@@ -20,6 +20,8 @@ int main ()
     LinkRight(node2, node4);
 
     DumpTree(&tree1);
+
+    DeleteNode(node1);
 }
 
 

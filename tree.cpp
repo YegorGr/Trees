@@ -153,7 +153,9 @@ void DumpTree (tree_t* tree)
     if (dot == nullptr) return;
 
     fprintf(dot, "digraph Tree {\n");
-    fprintf(dot, "    node [shape=circle];\n");
+
+    fprintf(dot, "    nodesep=0.5;\n");
+    fprintf(dot, "    ranksep=0.8;\n");
 
     if (tree->root != nullptr)
         DumpNode(tree->root, dot);
@@ -168,17 +170,21 @@ void DumpNode (node_t* node, FILE* dot)
 {
     if (node == nullptr || dot == nullptr) return;
 
-    fprintf(dot, "    node%p [label=\"%lf\"];\n", node, node->data);
+    fprintf(dot, "    node%p [shape=Mrecord, label=\"{ %.2lf | 0x%p | { <left> 0x%p | <right> 0x%p } }\"];\n", 
+            node, node->data, node, node->left, node->right);
 
     if (node->left != nullptr)
     {
-        fprintf(dot, "    node%p -> node%p [color=\"blue\"];\n", node, node->left);
+        fprintf(dot, "    node%p:left -> node%p [color=\"blue\"];\n", node, node->left);
         DumpNode(node->left, dot);
     }
 
     if (node->right != nullptr)
     {
-        fprintf(dot, "    node%p -> node%p [color=\"red\"];\n", node, node->right);
+        fprintf(dot, "    node%p:right -> node%p [color=\"red\"];\n", node, node->right);
         DumpNode(node->right, dot);
     }
-}
+
+    if (node->left != nullptr && node->right != nullptr)
+         fprintf(dot, "    { rank=same; node%p; node%p; }\n", node->left, node->right);
+ }

@@ -9,7 +9,7 @@ const char* ErrString [] =
 
 #undef GENERATE_STRING
 
-ErrNode CreateNode (node_t** new_node, elem_t data)
+ErrNode CreateNode (node_t** new_node, const char* data)
 {
     if (new_node == nullptr || data == nullptr)
         return NULL_PTR;
@@ -128,12 +128,10 @@ ErrNode LinkLeft (node_t* node_p, node_t* node_c)
     node_p->left   = node_c;
     node_c->parent = node_p;
 
-    node_c->tree = node_p->tree;
-
     return IS_OK;
 }
 
-ErrNode CreateTree (tree_t* tree, node_t** new_node, elem_t first_elem)
+ErrNode CreateTree (tree_t* tree, node_t** new_node, const char* first_elem)
 {
     if (tree == nullptr || new_node == nullptr)
         return NULL_PTR;
@@ -180,7 +178,7 @@ void DumpNode (node_t* node, FILE* dot)
     ErrNode err = NodeVerify(node);
 
     fprintf(dot, "    node%p [shape=Mrecord, "
-                 "label=\"{ { Err: %s | Data: %.2lf } | Ptr: 0x%p | { <left> Ptr(L): 0x%p | <right> Ptr(R): 0x%p } }\"];\n", 
+                 "label=\"{ { Err: %s | Data: %s } | Ptr: %p | { <left> Ptr(L): %p | <right> Ptr(R): %p } }\"];\n", 
             node, ErrString[err], node->data, node, node->left, node->right);
 
     if (node->left != nullptr)
@@ -230,7 +228,7 @@ void SkipSpaces(FILE* in)
 {
     int symbol = 0;
 
-    while ((symbol = fgetc(in)) != EOF && isspace(ch)) 
+    while ((symbol = fgetc(in)) != EOF && isspace(symbol)) 
         ;
     
     if (symbol != EOF) 

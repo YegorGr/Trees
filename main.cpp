@@ -2,26 +2,48 @@
 
 int main ()
 {
-    node_t* node1 = nullptr;
-    node_t* node2 = nullptr;
-    node_t* node3 = nullptr;
-    node_t* node4 = nullptr;
+    const char* filename = "base.txt";
+    tree_t tree = {};
 
-    tree_t tree1 = {};
-   
-    CreateTree(&tree1, &node1, 50);
+    FILE* in = fopen(filename, "r");
+    if (in != nullptr)
+    {
+        tree.root = LoadTreeFromFile(in);
+        fclose(in);
+        tree.size = SubTree(tree.root, &tree);
+    }
 
-    CreateNode(&node2, 60);
-    CreateNode(&node3, 40);
-    CreateNode(&node4, 70);
+    if (tree.root == nullptr)
+    {
+        node_t* root = nullptr;
+        CreateTree(&tree, &root, "nothing");
+    }
 
-    LinkLeft(node1, node3);
-    LinkRight(node1, node2);
-    LinkRight(node2, node4);
+    bool is_running = true;
+    while (is_running)
+    {
+        printf("\n1 - play\n2 - show base\n0 - exit\n> ");
 
-    DumpTree(&tree1);
+        char buf[MAX_LEN_STR] = {};
+        if (!SaveRead(buf, sizeof buf)) break;
 
-    DeleteNode(node1);
+        switch (atoi(buf))
+        {
+            case 1:  PlayAkinator(&tree); break;
+            case 2:  DumpTree(&tree);     break;
+            case 0:  is_running = false;  break;
+            default: printf("No such item.\n");
+        }
+    }
+
+    FILE* out = fopen(filename, "w");
+    if (out != nullptr)
+    {
+        PrePrint(tree.root, out);
+        fclose(out);
+    }
+
+    DeleteNode(tree.root);
 }
 
 

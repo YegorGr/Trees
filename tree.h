@@ -31,7 +31,7 @@ struct tree_t
     size_t  size;
 };
 
-ErrNode CreateNode (node_t** new_node, elem_t data);
+ErrNode CreateNode (node_t** new_node, const char* data);
 ErrNode DeleteNode (node_t* node);
 
 ErrNode LinkRight  (node_t* node_p, node_t* node_c);
@@ -39,9 +39,24 @@ ErrNode LinkLeft   (node_t* node_p, node_t* node_c);
 
 ErrNode NodeVerify (node_t* node);
 
-ErrNode CreateTree (tree_t* tree, node_t** new_node, elem_t first_elem);
+ErrNode CreateTree (tree_t* tree, node_t** new_node, const char* first_elem);
 
-void DumpTree      (tree_t* tree);
-void DumpNode      (node_t* node, FILE* dot);
+void    DumpTree   (tree_t* tree);
+void    DumpNode   (node_t* node, FILE* dot);
 
-void ClearBuffer (void);
+void    ClearBuffer(void);
+
+size_t  SubTree    (node_t* node, tree_t* tree);
+void    PrePrint   (node_t* node, FILE* out);
+void    SkipSpaces (FILE* in);
+bool    SaveRead   (char* buf, size_t size);
+int     YesOrNo    (const char* question);
+
+node_t* LoadTreeFromFile (FILE* in);
+void    PlayAkinator     (tree_t* tree);
+void    AddNewObject     (node_t* node);
+
+
+
+
+

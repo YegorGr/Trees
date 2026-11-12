@@ -4,11 +4,12 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <strings.h>
 #include <ctype.h>
 
 #include "errors.h"
 
-const int MAX_LEN_STR = 1024;
+const int MAX_LEN_STR = 64;
 
 typedef char* elem_t;
 
@@ -42,3 +43,5 @@ ErrNode CreateTree (tree_t* tree, node_t** new_node, elem_t first_elem);
 
 void DumpTree      (tree_t* tree);
 void DumpNode      (node_t* node, FILE* dot);
+
+void ClearBuffer (void);

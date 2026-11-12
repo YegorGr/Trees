@@ -87,17 +87,18 @@ ErrNode DeleteNode (node_t* node)
             node->tree->root = nullptr;
     }
 
+    if (node->tree != nullptr)
+       node->tree->size--;
+
+    free(node->data);
+    free(node);
+
     node->data   = nullptr; 
     node->left   = nullptr;
     node->right  = nullptr;
     node->parent = nullptr;
 
-    if (node->tree != nullptr) 
-        node->tree->size--;
-    
-    free(node->data);
-
-    return IS_OK;
+   return IS_OK;
 }
 
 ErrNode LinkRight (node_t* node_p, node_t* node_c)
@@ -275,4 +276,123 @@ node_t* LoadTreeFromFile(FILE* in)
     return nullptr;
 }
 
+bool SaveRead (char* buf, size_t size)
+{
+    if (fgets(buf, size, stdin) == nullptr)
+        return false;
+
+    buf[strcspn(buf, "\n")] = '\0';
+
+    return true;
+}
+
+int YesOrNo (const char* question)
+{
+    char buf[MAX_LEN_STR] = {};
+
+    while (true)
+    {
+        printf("%s (yes/no): ", question);
+        if (!SaveRead(buf, sizeof buf))
+            return -1;
+
+        if (strcasecmp(buf, "yes") == 0) return 1;
+        if (strcasecmp(buf, "no")  == 0) return 0;
+
+        printf("Only yes or no.\n");
+    }
+}
+
+void PlayAkinator(tree_t* tree) 
+{
+    if (tree == nullptr || tree->root == nullptr) 
+    {
+        printf("The data-base is null!\n");
+        return;
+    }
+
+    node_t* node = tree->root;
+
+    while (node->left != nullptr || node->right != nullptr) 
+    {
+        int ans = YesOrNo(node->data);  
+
+        if (ans == 1) // right is true
+        {
+            if (node->right) 
+                node = node->right;
+        } 
+        else if (ans == 0)
+        {
+            if (node->left) 
+                node = node->left;
+        }
+        else 
+        {
+            printf("Game over\n");
+            return;
+        }
+    }
+
+    char question[2 * MAX_LEN_STR] = {};
+    snprintf(question, sizeof(question), "Is this %s?", node->data);
+    int ans = YesOrNo(question);
+
+    if (ans == 1) 
+    {
+        printf("Eboy!\n");
+    }
+    else if (ans == 0) 
+    {
+        printf("Fuck! BUT WHO WAS IT?\n");
+        AddNewObject(node);
+    }
+    else
+    {
+        printf("Game over!\n");
+    }
+
+}
+
+void AddNewObject(node_t* node) 
+{
+    if (node == nullptr) 
+        return;
+
+    char new_object[MAX_LEN_STR]   = {};
+    char new_question[MAX_LEN_STR] = {};
+    
+    ClearBuffer();
+
+    printf("Write down who you’re thinking of: ");
+    scanf("%63[^\n]", new_object);
+    
+    ClearBuffer();
+
+    printf("In contrast \"%s\", \"%s\"... ", node->data, new_object);
+    scanf("%63[^\n]", new_question);
+
+    node_t* node_old = nullptr;
+    node_t* node_new = nullptr;
+    
+    CreateNode(&node_old, node->data);
+    CreateNode(&node_new, new_object);
+
+    free(node->data);    
+    node->data = strdup(new_question);
+
+    LinkRight(node, node_new);   
+    LinkLeft(node, node_old);   
+
+    printf("Thanks!\n");
+}
+
+void ClearBuffer (void)
+{
+    int ch = 0;
+    while ((ch = getchar()) != '\n' && ch != EOF)
+        ;
+
+    return;
+}
 

@@ -3,11 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <math.h>
+#include <string.h>
+#include <ctype.h>
 
 #include "errors.h"
 
-typedef double elem_t;
+const int MAX_LEN_STR = 1024;
+
+typedef char* elem_t;
 
 struct tree_t;
 

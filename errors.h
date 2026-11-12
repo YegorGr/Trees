@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdio.h>
 
 #define ERR_NODE_LIST(X)      \
@@ -9,7 +11,8 @@
     X(RIGHT_SELF_DESTRUCTION) \
     X(LEFT_SELF_DESTRUCTION)  \
     X(THE_SAME_LEFT_RIGHT)    \
-    X(NULL_PTR)
+    X(NULL_PTR)               \
+    X(SLOT_BUSY)
 
 
 #define GENERATE_ENUM(name) name, 

@@ -11,24 +11,22 @@ const char* ErrString [] =
 
 ErrNode CreateNode (node_t** new_node, elem_t data)
 {
-    assert(new_node);
-
+    if (new_node == nullptr || data == nullptr)
+        return NULL_PTR;
+    
     node_t* ptr = (node_t*) calloc (1, sizeof(node_t));
     if (ptr == nullptr)
         return NO_MEMORY;
     
-    ptr->data = data;
+    ptr->data = strdup(data);
         
-    ErrNode err = NodeVerify(ptr);
-    if (err != IS_OK) 
+    if (ptr->data == nullptr)
     {
-        DumpTree(ptr->tree);
         free(ptr);
-        return err;
+        return NO_MEMORY;
     }
 
     *new_node = ptr;
-    
     return IS_OK;
 }
 
@@ -89,7 +87,7 @@ ErrNode DeleteNode (node_t* node)
             node->tree->root = nullptr;
     }
 
-    node->data   = NAN; 
+    node->data   = nullptr; 
     node->left   = nullptr;
     node->right  = nullptr;
     node->parent = nullptr;
@@ -97,13 +95,16 @@ ErrNode DeleteNode (node_t* node)
     if (node->tree != nullptr) 
         node->tree->size--;
     
-    free(node);
+    free(node->data);
 
     return IS_OK;
 }
 
 ErrNode LinkRight (node_t* node_p, node_t* node_c)
 {
+    if (node_p->right != nullptr || node_c->parent != nullptr)
+        return SLOT_BUSY;
+
     ErrNode err = IS_OK;
     if ((err = NodeVerify(node_p)) != IS_OK || (err = NodeVerify(node_c)) != IS_OK)
         return err;
@@ -111,16 +112,14 @@ ErrNode LinkRight (node_t* node_p, node_t* node_c)
     node_p->right  = node_c;
     node_c->parent = node_p;
 
-    node_c->tree = node_p->tree;
-
-    if (node_p->tree != nullptr)
-        node_p->tree->size++;
-
     return IS_OK;
 }
 
 ErrNode LinkLeft (node_t* node_p, node_t* node_c)
 {
+    if (node_p->left != nullptr || node_c->parent != nullptr)
+        return SLOT_BUSY;
+
     ErrNode err = IS_OK;
     if ((err = NodeVerify(node_p)) != IS_OK || (err = NodeVerify(node_c)) != IS_OK)
         return err;
@@ -129,9 +128,6 @@ ErrNode LinkLeft (node_t* node_p, node_t* node_c)
     node_c->parent = node_p;
 
     node_c->tree = node_p->tree;
-
-    if (node_p->tree != nullptr)
-        node_p->tree->size++;
 
     return IS_OK;
 }
@@ -150,6 +146,7 @@ ErrNode CreateTree (tree_t* tree, node_t** new_node, elem_t first_elem)
     
     tree->root = *new_node;
     tree->size = 1;
+    (*new_node)->tree = tree;
 
     return IS_OK;
 }
@@ -200,3 +197,82 @@ void DumpNode (node_t* node, FILE* dot)
     if (node->left != nullptr && node->right != nullptr)
          fprintf(dot, "    { rank=same; node%p; node%p; }\n", node->left, node->right);
 }
+
+size_t SubTree (node_t* node, tree_t* tree)
+{
+    if (node == nullptr)
+        return 0;
+        
+    node->tree = tree;
+
+    size_t left_count  = SubTree(node->left, tree);
+    size_t right_count = SubTree(node->right, tree);
+
+    return 1 + left_count + right_count; 
+}
+
+void PrePrint (node_t* node, FILE* out)
+{
+    if (node == nullptr)
+    {
+        fprintf(out, " 0 ");
+        return;
+    }
+
+    fprintf(out, "(\"%s\" ", node->data);
+    PrePrint(node->left, out);
+    PrePrint(node->right, out);
+    fprintf(out, ") ");
+}
+
+void SkipSpaces(FILE* in) 
+{
+    int symbol = 0;
+
+    while ((symbol = fgetc(in)) != EOF && isspace(ch)) 
+        ;
+    
+    if (symbol != EOF) 
+        ungetc(symbol, in); 
+}
+
+node_t* LoadTreeFromFile(FILE* in)
+{
+    SkipSpaces(in);
+
+    int ch = fgetc(in);
+    if (ch == EOF)
+        return nullptr;
+
+    if (ch == '0')
+        return nullptr;
+
+    if (ch == '(')
+    {
+        char buffer[MAX_LEN_STR] = {};
+
+        fscanf(in, " \"%[^\"]\" ", buffer);
+
+        node_t* new_node = nullptr;
+        CreateNode(&new_node, buffer);
+
+        new_node->left = LoadTreeFromFile(in);
+        if (new_node->left != nullptr) 
+            new_node->left->parent = new_node;
+        
+        new_node->right = LoadTreeFromFile(in);
+        if (new_node->right != nullptr) 
+            new_node->right->parent = new_node;;
+
+        SkipSpaces(in);
+        ch = fgetc(in);
+        if (ch != ')')
+            printf("Error to read: waited ')'\n");
+
+        return new_node;
+    }
+
+    return nullptr;
+}
+
+

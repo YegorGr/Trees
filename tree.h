@@ -10,6 +10,7 @@
 #include "errors.h"
 
 const int MAX_LEN_STR = 64;
+const char* const DEFAULT_BASE = "base.txt";
 
 typedef char* elem_t;
 
@@ -29,6 +30,14 @@ struct tree_t
 {
     node_t* root;
     size_t  size;
+};
+
+enum Menu
+{
+    MENU_EXIT = '0',
+    MENU_PLAY = '1',
+    MENU_SHOW = '2',
+    MENU_BAD  = '-1',
 };
 
 ErrNode CreateNode (node_t** new_node, const char* data);
@@ -55,6 +64,10 @@ int     YesOrNo    (const char* question);
 node_t* LoadTreeFromFile (FILE* in);
 void    PlayAkinator     (tree_t* tree);
 void    AddNewObject     (node_t* node);
+
+FILE*   OpenFile         (int argc, const char** argv, const char** filename);
+void    ModeSelect       (void);
+
 
 
 

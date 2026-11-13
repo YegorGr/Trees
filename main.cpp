@@ -1,11 +1,12 @@
 #include "tree.h"
 
-int main ()
+int main (int argc, const char* argv[])
 {
-    const char* filename = "base.txt";
-    tree_t tree = {};
+    const char* filename = nullptr;
+    tree_t      tree     = {};
 
-    FILE* in = fopen(filename, "r");
+    FILE* in = OpenFile(argc, argv, &filename);
+
     if (in != nullptr)
     {
         tree.root = LoadTreeFromFile(in);
@@ -16,25 +17,10 @@ int main ()
     if (tree.root == nullptr)
     {
         node_t* root = nullptr;
-        CreateTree(&tree, &root, "nothing");
+        CreateTree(&tree, &root, "Null tree");
     }
 
-    bool is_running = true;
-    while (is_running)
-    {
-        printf("\n1 - play\n2 - show base\n0 - exit\n> ");
-
-        char buf[MAX_LEN_STR] = {};
-        if (!SaveRead(buf, sizeof buf)) break;
-
-        switch (atoi(buf))
-        {
-            case 1:  PlayAkinator(&tree); break;
-            case 2:  DumpTree(&tree);     break;
-            case 0:  is_running = false;  break;
-            default: printf("No such item.\n");
-        }
-    }
+    ModeSelect();
 
     FILE* out = fopen(filename, "w");
     if (out != nullptr)

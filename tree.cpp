@@ -394,3 +394,40 @@ void ClearBuffer (void)
     return;
 }
 
+ FILE* OpenFile (int argc, const char** argv, const char** filename)
+{ 
+    assert(filename);
+
+    *filename = (argc >= 2) ? argv[1] : DEFAULT_BASE;
+
+    printf("Loading base: %s\n", *filename);
+
+    FILE* in = fopen(*filename, "r");
+    if (in == nullptr)
+        return nullptr;
+
+    return in;
+}
+
+void ModeSelect (void)
+{
+    bool is_running = true;
+    while (is_running)
+    {
+        printf("\n1 - play akinator\n2 - show base\n0 - exit\n> ");
+
+        char buf[MAX_LEN_STR] = {};
+
+        if (!SaveRead(buf, sizeof(buf))) 
+            break;
+
+        switch (buf[0])
+        {
+            case MENU_PLAY:  PlayAkinator(&tree); break;
+            case MENU_SHOW:  DumpTree(&tree);     break;
+            case MENU_EXIT:  is_running = false;  break;
+
+            default: printf("No such item.\n");
+        }
+    }
+}

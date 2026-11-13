@@ -356,10 +356,8 @@ void AddNewObject(node_t* node)
 
     char new_object[MAX_LEN_STR]   = {};
     char new_question[MAX_LEN_STR] = {};
-    
-    ClearBuffer();
 
-    printf("Write down who you’re thinking of: ");
+    printf("Write the name of this person: ");
     scanf("%63[^\n]", new_object);
     
     ClearBuffer();
@@ -374,7 +372,8 @@ void AddNewObject(node_t* node)
     CreateNode(&node_new, new_object);
 
     free(node->data);    
-    node->data = strdup(new_question);
+    node->data = (elem_t) calloc(sizeof(new_question) + 1, sizeof(char));
+    snprintf(node->data, sizeof(new_question) + 1, "%s?", new_question);
 
     LinkRight(node, node_new);   
     LinkLeft(node, node_old);   
@@ -422,7 +421,7 @@ void ModeSelect (tree_t* tree)
         {
             case MENU_PLAY:  PlayAkinator(tree); break;
             case MENU_SHOW:  DumpTree(tree);     break;
-            case MENU_EXIT:  is_running = false;  break;
+            case MENU_EXIT:  is_running = false; break;
 
             default: printf("No such item.\n");
         }

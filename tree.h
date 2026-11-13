@@ -9,6 +9,7 @@
 
 #include "errors.h"
 
+const int MAX_COUNT = 256;
 const int MAX_LEN_STR = 128;
 const char* const DEFAULT_BASE = "base.txt";
 

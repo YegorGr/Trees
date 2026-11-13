@@ -290,7 +290,7 @@ int YesOrNo (const char* question)
 
     while (true)
     {
-        printf("%s (yes/no): ", question);
+        printf("%s? (yes/no): ", question);
         if (!SaveRead(buf, sizeof buf))
             return -1;
 
@@ -333,7 +333,7 @@ void PlayAkinator(tree_t* tree)
     }
 
     char question[2 * MAX_LEN_STR] = {};
-    snprintf(question, sizeof(question), "Is this %s?", node->data);
+    snprintf(question, sizeof(question), "Is this %s", node->data);
     int ans = YesOrNo(question);
 
     if (ans == 1) 
@@ -372,8 +372,7 @@ void AddNewObject(node_t* node)
     CreateNode(&node_new, new_object);
 
     free(node->data);    
-    node->data = (elem_t) calloc(sizeof(new_question) + 1, sizeof(char));
-    snprintf(node->data, sizeof(new_question) + 1, "%s?", new_question);
+    node->data = strdup(new_question);
 
     LinkRight(node, node_new);   
     LinkLeft(node, node_old);   
@@ -450,7 +449,7 @@ void SearchTree (tree_t* tree)
 
     if (current->parent == nullptr)
     {
-        printf("\"%s\" is the only one object, there is nothing to describe yet.\n", leaf->data);
+        printf("\"%s\" is the only one object, there is nothing to describe yet.\n", current->data);
         return;
     }
 
@@ -460,18 +459,18 @@ void SearchTree (tree_t* tree)
     return;
 }
 
-void PrintDef (node_t* node)
-{
-    assert(node);
+// void PrintDef (node_t* node)
+// {
+//     assert(node);
 
-    if (node->parent == nullptr)
-        return;
+//     if (node->parent == nullptr)
+//         return;
 
-    PrintDef(node->parent);
+//     PrintDef(node->parent);
 
-    node_t* question = node->parent;
-    printf("%s - %s\n", question->data, (question->right == node) ? "yes" : "no");
-}
+//     node_t* question = node->parent;
+//     printf("%s - %s\n", question->data, (question->right == node) ? "yes" : "no");
+// }
 
 void PrintObject (node_t* node)
 {
@@ -504,3 +503,35 @@ node_t* SearchNode (node_t* node, const char* name)
     return right_result;                                  
 }
 
+void PrintDef(node_t* node)
+{
+    if (node == nullptr || node->parent == nullptr) return;
+
+    const char* pos_traits[MAX_COUNT] = {};
+    const char* neg_traits[MAX_COUNT] = {};
+
+    int pos_count = 0;
+    int neg_count = 0;
+
+    for (node_t* curr = node; curr->parent != nullptr; curr = curr->parent) 
+    {
+        if (curr->parent->right == curr)
+            pos_traits[pos_count++] = curr->parent->data;
+        else
+            neg_traits[neg_count++] = curr->parent->data;
+    }
+    
+    printf("%s is", node->data);
+
+    for (int i = pos_count - 1; i >= 0; i--) 
+        printf(" %s,", pos_traits[i]);
+        
+    if (neg_count > 0) 
+    {
+        printf(" but not");
+        for (int i = neg_count - 1; i >= 0; i--) 
+            printf(" %s,", neg_traits[i]);
+    }
+    
+    printf("\n");
+}

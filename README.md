@@ -1,4 +1,4 @@
-#An Akinator using binary trees and reading from a file
+# An Akinator using binary trees and reading from a file
 
 The god damn project uses a fucking graphical tree dump, can read from a shit file, and can also update the database and write the result to a file.
 

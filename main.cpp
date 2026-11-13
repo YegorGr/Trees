@@ -5,7 +5,7 @@ int main (int argc, const char* argv[])
     const char* filename = nullptr;
     tree_t      tree     = {};
 
-    FILE* in = OpenFile(argc, argv, &filename);
+    FILE* in = OpenFileRead(argc, argv, &filename);
 
     if (in != nullptr)
     {

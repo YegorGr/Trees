@@ -337,18 +337,15 @@ void PlayAkinator(tree_t* tree)
     int ans = YesOrNo(question);
 
     if (ans == 1) 
-    {
         printf("Eboy!\n");
-    }
+
     else if (ans == 0) 
     {
         printf("Fuck! BUT WHO WAS IT?\n");
         AddNewObject(node);
     }
     else
-    {
         printf("Game over!\n");
-    }
 
 }
 
@@ -394,7 +391,7 @@ void ClearBuffer (void)
     return;
 }
 
- FILE* OpenFile (int argc, const char** argv, const char** filename)
+ FILE* OpenFileRead (int argc, const char** argv, const char** filename)
 { 
     assert(filename);
 
@@ -423,8 +420,8 @@ void ModeSelect (tree_t* tree)
 
         switch (buf[0])
         {
-            case MENU_PLAY:  PlayAkinator(&tree); break;
-            case MENU_SHOW:  DumpTree(&tree);     break;
+            case MENU_PLAY:  PlayAkinator(tree); break;
+            case MENU_SHOW:  DumpTree(tree);     break;
             case MENU_EXIT:  is_running = false;  break;
 
             default: printf("No such item.\n");

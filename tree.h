@@ -65,7 +65,7 @@ node_t* LoadTreeFromFile (FILE* in);
 void    PlayAkinator     (tree_t* tree);
 void    AddNewObject     (node_t* node);
 
-FILE*   OpenFile         (int argc, const char** argv, const char** filename);
+FILE*   OpenFileRead     (int argc, const char** argv, const char** filename);
 void    ModeSelect       (tree_t* treee);
 
 

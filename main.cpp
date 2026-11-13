@@ -20,7 +20,7 @@ int main (int argc, const char* argv[])
         CreateTree(&tree, &root, "Null tree");
     }
 
-    ModeSelect();
+    ModeSelect(&tree);
 
     FILE* out = fopen(filename, "w");
     if (out != nullptr)

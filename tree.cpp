@@ -409,7 +409,7 @@ void ClearBuffer (void)
     return in;
 }
 
-void ModeSelect (void)
+void ModeSelect (tree_t* tree)
 {
     bool is_running = true;
     while (is_running)

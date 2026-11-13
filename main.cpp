@@ -28,7 +28,7 @@ int main (int argc, const char* argv[])
         PrePrint(tree.root, out);
         fclose(out);
     }
-
+    
     DeleteNode(tree.root);
 }
 

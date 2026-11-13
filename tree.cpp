@@ -183,13 +183,13 @@ void DumpNode (node_t* node, FILE* dot)
 
     if (node->left != nullptr)
     {
-        fprintf(dot, "    node%p:left -> node%p [color=\"blue\"];\n", node, node->left);
+        fprintf(dot, "    node%p:left -> node%p [color=\"red\"];\n", node, node->left);
         DumpNode(node->left, dot);
     }
 
     if (node->right != nullptr)
     {
-        fprintf(dot, "    node%p:right -> node%p [color=\"red\"];\n", node, node->right);
+        fprintf(dot, "    node%p:right -> node%p [color=\"blue\"];\n", node, node->right);
         DumpNode(node->right, dot);
     }
 
@@ -410,7 +410,7 @@ void ModeSelect (tree_t* tree)
     bool is_running = true;
     while (is_running)
     {
-        printf("\n1 - play akinator\n2 - show base\n0 - exit\n> ");
+        printf("\n1 - play akinator\n2 - show base\n3 - define mode\n0 - exit\n> ");
 
         char buf[MAX_LEN_STR] = {};
 
@@ -422,8 +422,85 @@ void ModeSelect (tree_t* tree)
             case MENU_PLAY:  PlayAkinator(tree); break;
             case MENU_SHOW:  DumpTree(tree);     break;
             case MENU_EXIT:  is_running = false; break;
+            case MENU_PRINT: SearchTree(tree);   break;
 
             default: printf("No such item.\n");
         }
     }
 }
+
+void SearchTree (tree_t* tree)
+{
+    assert(tree);
+
+    printf("Choose the element: ");
+    PrintObject(tree->root);
+    printf("\n> ");
+
+    char name[MAX_LEN_STR] = {};
+    if (!SaveRead(name, sizeof(name)))
+        return;
+
+    node_t* current = SearchNode(tree->root, name);
+    if (current == nullptr)
+    {
+        printf("There is no \"%s\" in the base.\n", name);
+        return;
+    }
+
+    if (current->parent == nullptr)
+    {
+        printf("\"%s\" is the only one object, there is nothing to describe yet.\n", leaf->data);
+        return;
+    }
+
+    printf("\"%s\">\n", current->data);
+    PrintDef(current);
+
+    return;
+}
+
+void PrintDef (node_t* node)
+{
+    assert(node);
+
+    if (node->parent == nullptr)
+        return;
+
+    PrintDef(node->parent);
+
+    node_t* question = node->parent;
+    printf("%s - %s\n", question->data, (question->right == node) ? "yes" : "no");
+}
+
+void PrintObject (node_t* node)
+{
+    assert(node);
+
+    if (node->right != nullptr)
+        PrintObject(node->left);
+
+    if (node->left != nullptr)
+        PrintObject(node->right);
+
+    if (node->left == nullptr || node->right == nullptr)
+        printf("\"%s\", ", node->data);
+}
+
+node_t* SearchNode (node_t* node, const char* name)
+{
+    if (node == nullptr)                                    
+        return nullptr;
+
+    if (node->left == nullptr && node->right == nullptr && strcasecmp(node->data, name) == 0)             
+        return node;
+
+    node_t* left_result  = SearchNode(node->left,  name); 
+    node_t* right_result = SearchNode(node->right, name);   
+
+    if (left_result != nullptr)                             
+        return left_result;
+
+    return right_result;                                  
+}
+

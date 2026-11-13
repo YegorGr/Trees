@@ -9,7 +9,7 @@
 
 #include "errors.h"
 
-const int MAX_LEN_STR = 64;
+const int MAX_LEN_STR = 128;
 const char* const DEFAULT_BASE = "base.txt";
 
 typedef char* elem_t;
@@ -34,10 +34,11 @@ struct tree_t
 
 enum Menu
 {
-    MENU_EXIT = '0',
-    MENU_PLAY = '1',
-    MENU_SHOW = '2',
-    MENU_BAD  = '-1',
+    MENU_EXIT  = '0',
+    MENU_PLAY  = '1',
+    MENU_SHOW  = '2',
+    MENU_PRINT = '3',
+    MENU_BAD   = '-1',
 };
 
 ErrNode CreateNode (node_t** new_node, const char* data);
@@ -67,6 +68,13 @@ void    AddNewObject     (node_t* node);
 
 FILE*   OpenFileRead     (int argc, const char** argv, const char** filename);
 void    ModeSelect       (tree_t* treee);
+
+void    SearchTree       (tree_t* tree);
+void    PrintObject      (node_t* node);
+void    PrintDef         (node_t* node);
+node_t* SearchNode       (node_t* node, const char* name);
+
+
 
 
 

@@ -409,7 +409,7 @@ void ModeSelect (tree_t* tree)
     bool is_running = true;
     while (is_running)
     {
-        printf("\n1 - play akinator\n2 - show base\n3 - define mode\n 4 - compare mode\n0 - exit\n> ");
+        printf("\n1 - play akinator\n2 - show base\n3 - define mode\n4 - compare mode\n0 - exit\n> ");
 
         char buf[MAX_LEN_STR] = {};
 

@@ -409,7 +409,7 @@ void ModeSelect (tree_t* tree)
     bool is_running = true;
     while (is_running)
     {
-        printf("\n1 - play akinator\n2 - show base\n3 - define mode\n0 - exit\n> ");
+        printf("\n1 - play akinator\n2 - show base\n3 - define mode\n 4 - compare mode\n0 - exit\n> ");
 
         char buf[MAX_LEN_STR] = {};
 
@@ -418,10 +418,11 @@ void ModeSelect (tree_t* tree)
 
         switch (buf[0])
         {
-            case MENU_PLAY:  PlayAkinator(tree); break;
-            case MENU_SHOW:  DumpTree(tree);     break;
-            case MENU_EXIT:  is_running = false; break;
-            case MENU_PRINT: SearchTree(tree);   break;
+            case MENU_PLAY:    PlayAkinator(tree);   break;
+            case MENU_SHOW:    DumpTree(tree);       break;
+            case MENU_EXIT:    is_running = false;   break;
+            case MENU_COMPARE: CompareObjects(tree); break;
+            case MENU_PRINT:   SearchTree(tree);     break;
 
             default: printf("No such item.\n");
         }
@@ -458,19 +459,6 @@ void SearchTree (tree_t* tree)
 
     return;
 }
-
-// void PrintDef (node_t* node)
-// {
-//     assert(node);
-
-//     if (node->parent == nullptr)
-//         return;
-
-//     PrintDef(node->parent);
-
-//     node_t* question = node->parent;
-//     printf("%s - %s\n", question->data, (question->right == node) ? "yes" : "no");
-// }
 
 void PrintObject (node_t* node)
 {
@@ -534,4 +522,81 @@ void PrintDef(node_t* node)
     }
     
     printf("\n");
+}
+
+void CompareObjects (tree_t* tree)
+{
+    assert(tree);
+
+    printf("Available objects: ");
+    PrintObject(tree->root);
+    printf("\n");
+
+    char name1[MAX_LEN_STR] = {};
+    char name2[MAX_LEN_STR] = {};
+
+    printf("First object: ");
+    if (!SaveRead(name1, sizeof(name1))) return;
+
+    printf("Second object: ");
+    if (!SaveRead(name2, sizeof(name2))) return;
+
+    node_t* node1 = SearchNode(tree->root, name1);
+    node_t* node2 = SearchNode(tree->root, name2);
+
+    if (node1 == nullptr || node2 == nullptr)
+    {
+        printf("One of the objects is not in the base.\n");
+        return;
+    }
+
+    if (node1 == node2)
+    {
+        printf("It is the same object.\n");
+        return;
+    }
+
+    node_t* path1[MAX_COUNT] = {};
+    node_t* path2[MAX_COUNT] = {};
+
+    int len1 = 0;
+    int len2 = 0;
+
+    for (node_t* curr = node1; curr != nullptr; curr = curr->parent)
+        path1[len1++] = curr;
+
+    for (node_t* curr = node2; curr != nullptr; curr = curr->parent)
+        path2[len2++] = curr;
+
+    int i = len1 - 1;
+    int j = len2 - 1;
+
+    printf("\nCommon:\n");
+    while (i > 0 && j > 0 && path1[i - 1] == path2[j - 1])
+    {
+        bool is_yes = (path1[i]->right == path1[i - 1]);
+
+        printf("  %s%s\n", is_yes ? "" : "not ", path1[i]->data);
+        i--;
+        j--;
+    }
+
+    if (i == len1 - 1 || j == len2 - 1)
+        printf("\nNothing");
+
+    printf("\nDifferences for %s:\n", node1->data);
+    PrintDiffrents(path1, i);
+
+    printf("\nDifferences for %s:\n", node2->data);
+    PrintDiffrents(path2, j);
+}
+
+void PrintDiffrents (node_t** path, int i)
+{
+    for (int k = i; k > 0; k--)
+    {
+        bool is_yes = (path[k]->right == path[k - 1]);
+
+        printf("  %s%s\n", is_yes ? "" : "not ", path[k]->data);
+    }
 }

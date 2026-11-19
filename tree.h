@@ -35,11 +35,11 @@ struct tree_t
 
 enum Menu
 {
-    MENU_EXIT  = '0',
-    MENU_PLAY  = '1',
-    MENU_SHOW  = '2',
-    MENU_PRINT = '3',
-    MENU_BAD   = '-1',
+    MENU_EXIT    = '0',
+    MENU_PLAY    = '1',
+    MENU_SHOW    = '2',
+    MENU_PRINT   = '3',
+    MENU_COMPARE = '4',
 };
 
 ErrNode CreateNode (node_t** new_node, const char* data);
@@ -74,6 +74,11 @@ void    SearchTree       (tree_t* tree);
 void    PrintObject      (node_t* node);
 void    PrintDef         (node_t* node);
 node_t* SearchNode       (node_t* node, const char* name);
+
+void    PrintDiffrents   (node_t** path, int i);
+void    CompareObjects   (tree_t* tree);
+
+
 
 
 

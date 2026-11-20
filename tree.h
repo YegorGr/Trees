@@ -75,7 +75,8 @@ void    PrintObject      (node_t* node);
 void    PrintDef         (node_t* node);
 node_t* SearchNode       (node_t* node, const char* name);
 
-void    PrintDiffrents   (node_t** path, int i);
+void    PrintDiffrents   (node_t** path, int last);
+void    PrintCommon      (int* count_1, int* count_2, node_t** path1, node_t** path2);
 void    CompareObjects   (tree_t* tree);
 
 

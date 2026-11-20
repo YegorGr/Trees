@@ -568,35 +568,43 @@ void CompareObjects (tree_t* tree)
     for (node_t* curr = node2; curr != nullptr; curr = curr->parent)
         path2[len2++] = curr;
 
-    int i = len1 - 1;
-    int j = len2 - 1;
+    int count_1 = len1 - 1;
+    int count_2 = len2 - 1;
 
     printf("\nCommon:\n");
-    while (i > 0 && j > 0 && path1[i - 1] == path2[j - 1])
-    {
-        bool is_yes = (path1[i]->right == path1[i - 1]);
-
-        printf("  %s%s\n", is_yes ? "" : "not ", path1[i]->data);
-        i--;
-        j--;
-    }
-
-    if (i == len1 - 1 || j == len2 - 1)
-        printf("\nNothing");
+    PrintCommon(&count_1, &count_2, path1, path2);
 
     printf("\nDifferences for %s:\n", node1->data);
-    PrintDiffrents(path1, i);
+    PrintDiffrents(path1, count_1);
 
     printf("\nDifferences for %s:\n", node2->data);
-    PrintDiffrents(path2, j);
+    PrintDiffrents(path2, count_2);
 }
 
-void PrintDiffrents (node_t** path, int i)
+void PrintDiffrents (node_t** path, int last)
 {
-    for (int k = i; k > 0; k--)
+    for (int i = last; i > 0; i--)
     {
-        bool is_yes = (path[k]->right == path[k - 1]);
-
-        printf("  %s%s\n", is_yes ? "" : "not ", path[k]->data);
+        bool is_yes = (path[i]->right == path[i - 1]);
+        
+        printf("  %s%s\n", is_yes ? "" : "not ", path[i]->data);
     }
+}
+
+void PrintCommon (int* count_1, int* count_2, node_t** path1, node_t** path2)
+{
+    int count_def1 = *count_1;
+    int count_def2 = *count_2;
+
+    while (*count_1 > 0 && *count_2 > 0 && path1[*count_1 - 1] == path2[*count_2 - 1]) // new function
+    {
+        bool is_yes = (path1[*count_1]->right == path1[*count_1 - 1]);
+
+        printf("  %s%s\n", is_yes ? "" : "not ", path1[*count_1]->data);
+        (*count_1)--;
+        (*count_2)--;
+    }
+
+    if (*count_1 == count_def1 || *count_2 == count_def2)
+        printf("\nNothing");
 }
